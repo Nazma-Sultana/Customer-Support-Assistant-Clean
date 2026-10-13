@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,6 +22,15 @@ public class GlobalExceptionHandler {
             errors.put(error.getField(), error.getDefaultMessage())
         );
         return errors;
+    }
+
+    // Bad credentials / unknown username during login — return 401, not a generic 500.
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Map<String, String> handleAuthenticationException(AuthenticationException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Invalid username or password");
+        return error;
     }
 
     // Custom business rule errors (duplicate email, not found, etc.)

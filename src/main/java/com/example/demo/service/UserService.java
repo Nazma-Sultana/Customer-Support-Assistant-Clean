@@ -42,7 +42,7 @@ public class UserService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        //user.setRole(request.getRole());
+        // Public registration always creates a CUSTOMER account; role is never accepted from the client.
         user.setRole(Role.CUSTOMER);
         return toResponse(userRepository.save(user));
     }
